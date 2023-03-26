@@ -1,0 +1,51 @@
+Description:
+    model_name: exp2_boundary_nov30
+
+general: 
+    use_deterministic_algorithms: False
+    batch_size: 4
+    device: 'cuda:9'  #0
+    gpu : 9 #0
+    save_path : /home/burkuc/data/v_dy/ade_video_e2e2_c5_test #./Out/Exp2_Nov30
+    save_output: [phosphenes, stimulation, reconstruction] #, input] #[phosphenes, stimulation, reconstruction, input]
+    
+simulator:
+    base_config: /home/burkuc/dynaphos/config/params.yaml #../../config/params.yaml
+    use_threshold: False
+    phosphene_map: /home/burkuc/dynaphos/config/DefaultCoordinateMap_1000_phosphenes.pickle #../../config/DefaultCoordinateMap_1000_phosphenes.pickle
+    
+e2e_models:
+    model_architecture: end-to-end-autoencoder2 #end-to-end-autoencoder # choose from end-to-end-autoencoder, zhao-autoencoder
+    in_channels: 5
+    n_electrodes: 1000
+    output_scaling: 128.0e-6
+    output_steps: None #10
+    out_channels: 5
+    out_activation: sigmoid
+
+optimization:
+    learning_rate : 0.0005
+    epochs : 16
+    trainstats_per_epoch : 24
+    validations_per_epoch: 8
+    early_stop_criterium : 15
+
+training_pipeline:
+    pipeline:  unconstrained-video-reconstruction2 #supervised-boundary-reconstruction
+    regularization_weight: 0.99999  # relative weight for enforcing interpretable (supervised) phosphene encodings
+    
+
+dataset:
+    dataset: ADE50K
+    data_directory : /home/burkuc/data/ADE20K/images/ #../../../_Datasets/ADE20K/
+    load_preprocessed: True # for the ADE50k dataset:
+    sequence_length: 5 #5 # for the BouncingMNIST dataset:
+    mode: recon # for the BouncingMNIST dataset:
+    
+    
+
+
+    
+    
+
+

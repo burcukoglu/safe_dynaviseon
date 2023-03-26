@@ -15,6 +15,8 @@ import yaml
 
 import pickle
 
+# #added
+# import imageio
 
 
 
@@ -146,3 +148,19 @@ class RGBConverter(object):
         image = torch.stack([self.weights[c]*image[:,c,:,:] for c in range(3)], dim=1)
         image = torch.sum(image,dim=1,keepdim=True)
         return image
+
+#added
+class Logger(object):
+    def __init__(self,log_file='out.log'):
+        self.logger = logging.getLogger()
+        hdlr = logging.FileHandler(log_file)
+        formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+        hdlr.setFormatter(formatter)
+        self.logger.addHandler(hdlr) 
+        self.logger.setLevel(logging.INFO)
+    def __call__(self,message):
+        #outputs to Jupyter console
+        print('{} {}'.format(datetime.datetime.now(), message))
+        #outputs to file
+        self.logger.info(message)
+

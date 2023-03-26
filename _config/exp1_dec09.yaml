@@ -1,0 +1,52 @@
+Description:
+    model_name: exp1_video_dec09
+
+general: 
+    use_deterministic_algorithms: False
+    batch_size: 2
+    device: 'cuda:8' 
+    gpu : 8
+    save_path : /home/burkuc/data/v_dy/ade_video_zhao_c1_t2 #./Out/Exp1_Nov28
+    save_output: ['phosphenes', 'stimulation', 'reconstruction'] #, 'input'] #['phosphenes', 'stimulation', 'reconstruction']
+    
+simulator:
+    base_config: /home/burkuc/dynaphos/config/params.yaml #../../config/params.yaml
+    use_threshold: False
+    phosphene_map: /home/burkuc/dynaphos/config/DefaultCoordinateMap_1000_phosphenes.pickle #../../config/DefaultCoordinateMap_1000_phosphenes.pickle
+    
+e2e_models:
+    model_architecture: zhao-autoencoder2 #zhao-autoencoder2 # choose from end-to-end-autoencoder, zhao-autoencoder
+    in_channels: 1
+    n_electrodes: 1000
+    output_scaling: 128.0e-6
+    output_steps: None #continous if None, otherwise number of steps for discretization
+    out_channels: 1
+    out_activation: sigmoid
+
+optimization:
+    learning_rate : 0.0001
+    epochs : 45
+    trainstats_per_epoch : 60
+    validations_per_epoch: 20
+    early_stop_criterium : 15
+
+training_pipeline:
+    pipeline: unconstrained-video-reconstruction3  #unconstrained-video-reconstruction3
+    regularization_weight: 0.5  # relative weight for enforcing interpretable (supervised) phosphene encodings
+    
+
+dataset:
+    dataset: ADE50K #BouncingMNIST
+    data_directory : /home/burkuc/data/ADE20K/images/ #for bouncing mnist /home/burkuc/data/ #../../../_Datasets/BouncingMnist/
+    load_preprocessed: True # for the ADE50k dataset:
+    sequence_length: 2 #5 # for both now! # 5 for the BouncingMNIST dataset:
+    mode: recon #recon_pred with 2 outputs # also add recon_label maybe# recon for the BouncingMNIST dataset:
+    
+    
+
+
+    
+    
+
+
+
