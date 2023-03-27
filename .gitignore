@@ -7,6 +7,6 @@ trace_gpu_last.json
 trace_gpu_first.json
 trace_gpu_first_getitem2.json
 training2.py
-init_trainign2.py
+init_training2.py
 local_datasets2.py
 _config/exp2_nov30.yaml

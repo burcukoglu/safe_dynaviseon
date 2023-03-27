@@ -29,6 +29,7 @@ e2e_models:
     rnn_num_layers: 1 #added
     constrained: [True, True, True] #added
     constrained_based_on : freq #added freq or pw
+    constraint_coeff: 1 #2
 
 optimization:
     learning_rate : 0.0001

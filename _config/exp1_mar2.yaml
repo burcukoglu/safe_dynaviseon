@@ -26,6 +26,7 @@ e2e_models:
     out_activation: sigmoid
     constrained: [True, True, True] #added
     constrained_based_on : freq # freq or pw
+    constraint_coeff: 1 #2
 
 optimization:
     learning_rate : 0.0001
