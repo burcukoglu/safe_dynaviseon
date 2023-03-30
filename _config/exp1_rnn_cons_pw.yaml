@@ -1,0 +1,61 @@
+Description:
+    model_name: kitty_zhao_sig_fps10_sliding_rnn_nomax_2fx_conspw_s2 #exp1_jan_sig_fps10_slide #exp1_jan_sig_fps10
+
+general: 
+    use_deterministic_algorithms: False
+    batch_size: 2
+    device: 'cuda:8' #change
+    gpu : 8 #change
+    save_path : /home/burkuc/data/v_dy/kitty_zhao_sig_fps10_sliding_rnn_nomax_2fx_conspw_s2 #sig_fps10 #tanh128 #./Out/Exp1_Nov28
+    save_output: ['phosphenes', 'stimulation_pulse_width', 'reconstruction', 'input', 'total_charge']  #['phosphenes', 'stimulation', 'reconstruction']
+    seed: 2
+    
+simulator:
+    base_config: /home/burkuc/dynaphos/config/params.yaml #  ../../config/params.yaml
+    use_threshold: False
+    fps: 10 #added -depends on the dataset used- Hz, regardless of how many frames are inputted
+    phosphene_map: /home/burkuc/dynaphos/config/DefaultCoordinateMap_1000_phosphenes.pickle #../../config/DefaultCoordinateMap_1000_phosphenes.pickle
+    
+e2e_models:
+    model_architecture: recurrent_net_cons1_2fx #zhao-autoencoder # choose from end-to-end-autoencoder, zhao-autoencoder
+    in_channels: 10 #1
+    n_electrodes: 1000 #same as  rnn_hidden_size 1000
+    output_scaling: 500.0e-6 #128.0e-6
+    output_steps: None
+    out_channels: 1
+    out_activation: sigmoid
+    rnn_hidden_size: 1000 #added #doesnt need to be same as electrode size with readout layer
+    rnn_input_size: 512 #2000 #added #same as dense layer output before rnn
+    rnn_num_layers: 1 #added
+    constrained: True #added
+    constrained_based_on: freq #added freq or pw
+    constraint_coeff: 2 #1
+    constrained_param: pulse_width  #amplitude, pulse_width, frequency 
+
+optimization:
+    learning_rate : 0.0001
+    epochs : 45
+    trainstats_per_epoch : 60
+    validations_per_epoch: 20
+    early_stop_criterium : 15
+
+training_pipeline:
+    pipeline: unconstrained-video-reconstruction_rnn_cons1_2fx #unconstrained-video-reconstruction
+    regularization_weight: 0.5 #0.5  # relative weight for enforcing interpretable (supervised) phosphene encodings
+    
+
+dataset:
+    dataset: KITTI #BouncingMNIST
+    data_directory : /home/burkuc/data/kitti/  #/home/burkuc/data/ #../../../_Datasets/BouncingMnist/
+    load_preprocessed: True # for the ADE50k dataset:
+    sequence_length: 10 #78 #5 # for the BouncingMNIST dataset:
+    mode: recon # for the BouncingMNIST dataset:
+    sliding_sequences: True #added for kitti
+    
+    
+
+
+    
+    
+
+

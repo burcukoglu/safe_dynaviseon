@@ -181,6 +181,10 @@ def train(dataset, models, training_pipeline, logging, cfg, start):
 
                     tb_writer.add_scalar('stimulation/min_freq', model_output["stimulation_frequency"].min(), timestamp['samples'])
                     tb_writer.add_scalar('stimulation/max_freq', model_output["stimulation_frequency"].max(), timestamp['samples'])
+                elif 'cons1_2fx' in cfg['pipeline']:
+                    tb_writer.add_scalar('stimulation/min_amp', model_output["stimulation_"+cfg['constrained_param']].min(), timestamp['samples'])
+                    tb_writer.add_scalar('stimulation/max_amp', model_output["stimulation_"+cfg['constrained_param']].max(), timestamp['samples'])
+                
                 else:
                     tb_writer.add_scalar('stimulation/min_amp', model_output["stimulation"].min(), timestamp['samples'])
                     tb_writer.add_scalar('stimulation/max_amp', model_output["stimulation"].max(), timestamp['samples'])

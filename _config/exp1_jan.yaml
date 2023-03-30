@@ -4,8 +4,8 @@ Description:
 general: 
     use_deterministic_algorithms: False
     batch_size: 2
-    device: 'cuda:8' #change
-    gpu : 8 #change
+    device: 'cuda:7' #change
+    gpu : 7 #change
     save_path : /home/burkuc/data/v_dy/kitty_zhao_sig_fps10_nomax_uncons_test #sig_fps10 #tanh128 #./Out/Exp1_Nov28
     save_output: ['phosphenes', 'stimulation', 'reconstruction', 'input', 'total_charge']  #['phosphenes', 'stimulation', 'reconstruction']
     seed: 0

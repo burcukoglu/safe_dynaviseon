@@ -125,6 +125,10 @@ def get_models(cfg):
         encoder, decoder = model.get_e2e_recurrent_net(cfg)
         optimizer = torch.optim.Adam([*encoder.parameters(), *decoder.parameters()], lr=cfg['learning_rate'])
     #added
+    elif cfg['model_architecture'] == 'recurrent_net_cons1_2fx':
+        encoder, decoder = model.get_e2e_recurrent_net_cons1_2fx(cfg)
+        optimizer = torch.optim.Adam([*encoder.parameters(), *decoder.parameters()], lr=cfg['learning_rate'])
+    #added
     elif cfg['model_architecture'] == 'recurrent_net_out3':
         encoder, decoder = model.get_e2e_recurrent_net_out3(cfg)
         optimizer = torch.optim.Adam([*encoder.parameters(), *decoder.parameters()], lr=cfg['learning_rate'])
@@ -151,6 +155,10 @@ def get_models(cfg):
     elif cfg['model_architecture'] == 'zhao-autoencoder_out32':
         encoder, decoder = model.get_Zhao_autoencoder_out32(cfg)
         optimizer = torch.optim.Adam([*encoder.parameters(), *decoder.parameters()], lr=cfg['learning_rate'])
+    #added
+    elif cfg['model_architecture'] == 'zhao-autoencoder_cons1_2fx':
+        encoder, decoder = model.get_Zhao_autoencoder_cons1_2fx(cfg)
+        optimizer = torch.optim.Adam([*encoder.parameters(), *decoder.parameters()], lr=cfg['learning_rate'])
     else:
         raise NotImplementedError
 
@@ -168,6 +176,7 @@ def get_models(cfg):
 def get_simulator(cfg):
     # initialise simulator
     params = dynaphos.utils.load_params(cfg['base_config'])
+    # print('param', params['default_stim']['pw_default'])
     params['run'].update(cfg)
     params['thresholding'].update(cfg)
     device = get_data_kwargs(params)['device']
@@ -200,6 +209,9 @@ def get_training_pipeline(cfg):
     elif cfg['pipeline'] == 'unconstrained-video-reconstruction_rnn':
         forward, lossfunc = get_pipeline_unconstrained_video_reconstruction_rnn(cfg)
     #added
+    elif cfg['pipeline'] == 'unconstrained-video-reconstruction_rnn_cons1_2fx':
+        forward, lossfunc = get_pipeline_unconstrained_video_reconstruction_rnn_cons1_2fx(cfg)
+    #added
     elif cfg['pipeline'] == 'unconstrained-video-reconstruction_rnn_out3':
         forward, lossfunc = get_pipeline_unconstrained_video_reconstruction_rnn_out3(cfg)
     #added
@@ -211,6 +223,9 @@ def get_training_pipeline(cfg):
     #added
     elif cfg['pipeline'] == 'unconstrained-video-reconstruction_out3':
         forward, lossfunc = get_pipeline_unconstrained_video_reconstruction_out3(cfg)
+    #added
+    elif cfg['pipeline'] == 'unconstrained-video-reconstruction_cons1_2fx':
+        forward, lossfunc = get_pipeline_unconstrained_video_reconstruction_cons1_2fx(cfg)   
     else:
         print(cfg['pipeline'] + 'not supported yet')
         raise NotImplementedError
@@ -337,6 +352,111 @@ def get_pipeline_unconstrained_video_reconstruction(cfg):
         # pdb.disable()
 
         out =  {'stimulation': stimulation_sequence, #torch.Size([5, 2, 1000])
+                'total_charge': total_charges, #added
+                'phosphenes': phosphenes,#torch.Size([2, 1, 5, 256, 256])
+                'reconstruction': reconstruction * cfg['circular_mask'], ##torch.Size([2, 1, 5, 128, 128])
+                'input': frames * cfg['circular_mask'], #torch.Size([2, 1, 5, 128, 128])
+                'input_resized': resize(frames *cfg['circular_mask'],
+                                         (cfg['sequence_length'],*cfg['SPVsize']),interpolation='trilinear')} #torch.Size([2, 1, 5, 256, 256])
+        # print('phos',out['phosphenes'].min(),out['phosphenes'].max())
+        # print('input_resized',out['input_resized'].min(),out['input_resized'].max())
+        if to_cpu:
+            # Return a cpu-copy of the model output
+            out = {k: v.detach().cpu().clone() for k, v in out.items()}
+
+        return out
+
+    recon_loss = LossTerm(name='reconstruction_loss',
+                          func=torch.nn.MSELoss(),
+                          arg_names=('reconstruction', 'input'),
+                          weight=1 - cfg['regularization_weight'])
+
+    regul_loss = LossTerm(name='regularization_loss',
+                          func=torch.nn.MSELoss(),
+                          arg_names=('phosphenes', 'input_resized'),
+                          weight= cfg['regularization_weight'])
+
+    loss_func = CompoundLoss([recon_loss, regul_loss])
+
+    return forward, loss_func
+
+#added
+def get_pipeline_unconstrained_video_reconstruction_cons1_2fx(cfg):
+    def forward(batch, models, cfg, to_cpu=False):
+        # Unpack
+        # print('batch', len(batch), batch[0].shape, batch[1].shape) 
+        # frames = batch
+        #added/changed
+        if isinstance(batch, list):
+            frames = batch[0]
+            # print('islist')
+        else:
+            frames = batch
+
+        encoder = models['encoder']
+        decoder = models['decoder']
+        simulator = models['simulator']
+
+        # print('simul', simulator.device)
+        # bouncing , mode: recon >> batch dtype torch.float32 batch len 2 but its a tensor of torch.Size([2, 1, 5, 128, 128])  not list, so elements:  torch.Size([1, 5, 128, 128]) torch.Size([1, 5, 128, 128])
+        # bouncing , mode: recon_pred or ade20k image,label >> batch 2 but it's a list of 2 elements(image, label or current,future), so elements:  torch.Size([2, 5, 128, 128]) torch.Size([2, 5, 128, 128])
+        
+        # print('frames', frames.shape, len(frames), frames[0].shape, frames[1].shape) # torch.Size([2, 1, 5, 128, 128]) 2 torch.Size([1, 5, 128, 128]) torch.Size([1, 5, 128, 128])
+        
+        # pdb.set_trace()
+        # pdb.enable()
+
+        # Forward
+        simulator.reset()
+        stimulation_sequence = encoder(frames).permute(1, 0, 2)  # permute: (Batch,Time,Num_phos) -> (Time,Batch,Num_phos) #
+        # amplitude_seq, pulse_width_seq, frequency_seq = encoder(frames)
+
+        # amplitude_seq = amplitude_seq.permute(1, 0, 2)
+        # pulse_width_seq = pulse_width_seq.permute(1, 0, 2)
+        # frequency_seq = frequency_seq.permute(1, 0, 2)
+
+
+        # print('stimulation_sequence reshaped', stimulation_sequence.shape) #torch.Size([5, 2, 1000])
+        # print('stimulation_sequence', stimulation_sequence.min(), stimulation_sequence.max())
+        phosphenes = []
+        # for stim in stimulation_sequence:
+        #     phosphenes.append(simulator(stim))  # simulator expects (Batch, Num_phosphenes)
+        # phosphenes = torch.stack(phosphenes, dim=1).unsqueeze(dim=1)  # Shape: (Batch, Channels=1, Time, Height, Width)
+
+        #changed/added
+        total_charges = []
+        for stim in stimulation_sequence:
+            if cfg['constrained_param']=='amplitude':
+                phos, total_charge= simulator(stim, None, None)
+            elif cfg['constrained_param']=='pulse_width':
+                phos, total_charge= simulator(None, stim, None)
+            elif cfg['constrained_param']=='frequency':
+                phos, total_charge= simulator(None, None, stim)
+        # for amplitude, pulse_width, frequency in zip(amplitude_seq, pulse_width_seq, frequency_seq):
+        #     phos, total_charge= simulator(amplitude, pulse_width, frequency)
+
+            # phosphenes.append(simulator(amplitude, pulse_width, frequency))
+            phosphenes.append(phos)
+            total_charges.append(total_charge)
+            # print('tc sh',total_charge.shape)
+
+
+        phosphenes = torch.stack(phosphenes, dim=1).unsqueeze(dim=1)  # Shape: (Batch, Channels=1, Time, Height, Width)
+        #added
+        total_charges = torch.stack(total_charges, dim=1).permute(1,0,2) #.unsqueeze(dim=1)
+        # print('tc', total_charges.shape)
+        # print('phosphenes', phosphenes.min(), phosphenes.max())
+        # print('shape',phosphenes.shape[2])
+        # for i in range(phosphenes.shape[2]):
+        #     plt.imsave(f'/home/burkuc/data/static/phos_v_{i}.png', phosphenes[0,0,i,:,:].detach().cpu().numpy(), cmap=plt.cm.gray) 
+        # plt.imsave(f'/home/burkuc/data/static/phos_v_all.png', phosphenes[0,0,:,:,:].detach().cpu().numpy(), cmap=plt.cm.gray) 
+        # print('phosphenes reshaped', phosphenes.shape) #torch.Size([2, 1, 5, 256, 256])
+        reconstruction = decoder(phosphenes)
+        # print('reconstruction ', reconstruction.shape) #torch.Size([2, 1, 5, 128, 128])
+        # pdb.set_trace()
+        # pdb.disable()
+
+        out =  {f"stimulation_{cfg['constrained_param']}": stimulation_sequence, #torch.Size([5, 2, 1000])
                 'total_charge': total_charges, #added
                 'phosphenes': phosphenes,#torch.Size([2, 1, 5, 256, 256])
                 'reconstruction': reconstruction * cfg['circular_mask'], ##torch.Size([2, 1, 5, 128, 128])
@@ -809,6 +929,108 @@ def get_pipeline_unconstrained_video_reconstruction_rnn_out3(cfg):
         out =  {'stimulation_amplitude': amplitude_seq,
                 'stimulation_pulse_width': pulse_width_seq, 
                 'stimulation_frequency': frequency_seq, 
+                # 'stimulation': stimulation_sequence,  #torch.Size([5, 2, 1000])
+                'total_charge': total_charges,
+                'phosphenes': phosphenes,#torch.Size([2, 1, 5, 256, 256])
+                'reconstruction': reconstruction * cfg['circular_mask'], ##torch.Size([2, 1, 5, 128, 128])
+                'input': frames * cfg['circular_mask'], #torch.Size([2, 1, 5, 128, 128]) #([2, 10, 128, 128])
+                'input_resized': resize(frames *cfg['circular_mask'],
+                                         (cfg['SPVsize']))} #,interpolation='trilinear')} #torch.Size([2, 1, 5, 256, 256]) ##([2, 10, 256, 256])
+                # 'input_resized': resize(frames *cfg['circular_mask'],
+                #                          (cfg['sequence_length'],*cfg['SPVsize']),interpolation='trilinear')} #torch.Size([2, 1, 5, 256, 256])
+
+        if to_cpu:
+            # Return a cpu-copy of the model output
+            out = {k: v.detach().cpu().clone() for k, v in out.items()}
+
+        return out
+
+    recon_loss = LossTerm(name='reconstruction_loss',
+                          func=torch.nn.MSELoss(),
+                          arg_names=('reconstruction', 'input'),
+                          weight=1 - cfg['regularization_weight'])
+
+    regul_loss = LossTerm(name='regularization_loss',
+                          func=torch.nn.MSELoss(),
+                          arg_names=('phosphenes', 'input_resized'),
+                          weight=cfg['regularization_weight'])
+
+    loss_func = CompoundLoss([recon_loss, regul_loss])
+
+    return forward, loss_func
+
+#added
+def get_pipeline_unconstrained_video_reconstruction_rnn_cons1_2fx(cfg):
+    def forward(batch, models, cfg, to_cpu=False):
+    # def forward(batch, hidden_state, models, cfg, to_cpu=False):
+        # Unpack
+        # print('batch', batch.shape) 
+        # frames = batch #torch.Size([2, 1, 10, 128, 128]) 
+        #added/changed
+        # if isinstance(batch, list):
+        #     frames = batch[0]
+        #     # print('islist')
+        # else:
+        #     frames = batch
+        
+        frames= batch.squeeze(1)
+        # print('frames',frames.shape)
+
+        encoder = models['encoder']
+        decoder = models['decoder']
+        simulator = models['simulator']
+
+        # bouncing , mode: recon >> batch dtype torch.float32 batch len 2 but its a tensor of torch.Size([2, 1, 5, 128, 128])  not list, so elements:  torch.Size([1, 5, 128, 128]) torch.Size([1, 5, 128, 128])
+        # bouncing , mode: recon_pred or ade20k image,label >> batch 2 but it's a list of 2 elements(image, label or current,future), so elements:  torch.Size([2, 5, 128, 128]) torch.Size([2, 5, 128, 128])
+        
+        # print('frames', frames.shape, len(frames), frames[0].shape, frames[1].shape) # torch.Size([2, 1, 5, 128, 128]) 2 torch.Size([1, 5, 128, 128]) torch.Size([1, 5, 128, 128])
+        
+        # pdb.set_trace()
+        # pdb.enable()
+
+        # Forward
+        simulator.reset()
+        hidden_state = (torch.zeros(cfg["rnn_num_layers"], cfg["batch_size"], cfg["n_electrodes"]).to(cfg['device']),torch.zeros(cfg["rnn_num_layers"], cfg["batch_size"], cfg["n_electrodes"]).to(cfg['device'])) 
+        # print('enc out',encoder(frames, hidden_state)) #torch.Size([2, 1000])
+        # pdb.set_trace()
+        # pdb.enable()
+        stimulation_sequence, rnn_output, hidden_state = encoder(frames, hidden_state)
+        # amplitude_seq, pulse_width_seq, frequency_seq, rnn_output, hidden_state = encoder(frames, hidden_state)
+
+        # amplitude_seq = amplitude_seq.permute(1, 0, 2)
+        # pulse_width_seq = pulse_width_seq.permute(1, 0, 2)
+        # frequency_seq = frequency_seq.permute(1, 0, 2)
+
+        phosphenes = []
+        total_charges = []
+        for stim in stimulation_sequence:
+            if cfg['constrained_param']=='amplitude':
+                phos, total_charge= simulator(stim, None, None)
+            elif cfg['constrained_param']=='pulse_width':
+                phos, total_charge= simulator(None, stim, None)
+            elif cfg['constrained_param']=='frequency':
+                phos, total_charge= simulator(None, None, stim)
+            # phos, total_charge= simulator(stim)
+        # for amplitude, pulse_width, frequency in zip(amplitude_seq, pulse_width_seq, frequency_seq):
+        #     phos, total_charge= simulator(amplitude, pulse_width, frequency)
+            # phosphenes.append(simulator(amplitude, pulse_width, frequency))
+            phosphenes.append(phos)
+            total_charges.append(total_charge)
+            # print('phos', phos.shape)
+            # print('tc sh',total_charge.shape)
+
+
+        phosphenes = torch.stack(phosphenes, dim=1) #.unsqueeze(dim=1)  # Shape: (Batch, Channels=1, Time, Height, Width)
+        # print('phosphenes',phosphenes.shape)
+        total_charges = torch.stack(total_charges, dim=1).permute(1,0,2) #.unsqueeze(dim=1)
+        # print('total_charges',total_charges.shape)
+
+        reconstruction = decoder(phosphenes)
+
+        out =  {f"stimulation_{cfg['constrained_param']}": stimulation_sequence,
+                # 'stimulation_amplitude': amplitude_seq,
+                # 'stimulation_pulse_width': pulse_width_seq, 
+                # 'stimulation_frequency': frequency_seq, 
                 # 'stimulation': stimulation_sequence,  #torch.Size([5, 2, 1000])
                 'total_charge': total_charges,
                 'phosphenes': phosphenes,#torch.Size([2, 1, 5, 256, 256])
