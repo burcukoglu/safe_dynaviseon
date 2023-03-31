@@ -1,14 +1,14 @@
 Description:
-    model_name: exp1_jan_sig_fps10_slide_nomax_2fx_consamp_s2 #exp1_jan_sig_fps10
+    model_name: exp1_jan_sig_fps10_slide_nomax_2fx_consamp_s1 #exp1_jan_sig_fps10
 
 general: 
     use_deterministic_algorithms: False
     batch_size: 2
     device: 'cuda:8' #change
     gpu : 8 #change
-    save_path : /home/burkuc/data/v_dy/kitty_zhao_sig_fps10_nomax_2fx_consamp_s2 #sig_fps10 #tanh128 #./Out/Exp1_Nov28
+    save_path : /home/burkuc/data/v_dy/kitty_zhao_sig_fps10_nomax_2fx_consamp_s1 #sig_fps10 #tanh128 #./Out/Exp1_Nov28
     save_output: ['phosphenes', 'stimulation_amplitude', 'reconstruction', 'input', 'total_charge']  #['phosphenes', 'stimulation', 'reconstruction']
-    seed: 2
+    seed: 1
     
 simulator:
     base_config: /home/burkuc/dynaphos/config/params.yaml #  ../../config/params.yaml
