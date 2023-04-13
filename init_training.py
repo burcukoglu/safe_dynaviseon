@@ -507,7 +507,7 @@ def get_pipeline_unconstrained_video_reconstruction_out3(cfg):
         # bouncing , mode: recon_pred or ade20k image,label >> batch 2 but it's a list of 2 elements(image, label or current,future), so elements:  torch.Size([2, 5, 128, 128]) torch.Size([2, 5, 128, 128])
         
         # print('frames', frames.shape, len(frames), frames[0].shape, frames[1].shape) # torch.Size([2, 1, 5, 128, 128]) 2 torch.Size([1, 5, 128, 128]) torch.Size([1, 5, 128, 128])
-        
+        # print('frames', frames.min(), frames.max())
         # pdb.set_trace()
         # pdb.enable()
 
@@ -550,6 +550,7 @@ def get_pipeline_unconstrained_video_reconstruction_out3(cfg):
         # plt.imsave(f'/home/burkuc/data/static/phos_v_all.png', phosphenes[0,0,:,:,:].detach().cpu().numpy(), cmap=plt.cm.gray) 
         # print('phosphenes reshaped', phosphenes.shape) #torch.Size([2, 1, 5, 256, 256])
         reconstruction = decoder(phosphenes)
+        # print('reconst', reconstruction.min(), reconstruction.max())
         # print('reconstruction ', reconstruction.shape) #torch.Size([2, 1, 5, 128, 128])
         # pdb.set_trace()
         # pdb.disable()
