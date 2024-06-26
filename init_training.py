@@ -82,16 +82,16 @@ class RunningLoss():
         return out
 
 
-class L1FeatureLoss(object):
-    def __init__(self):
-        self.feature_extractor = model.VGGFeatureExtractor(device=device)
-        self.loss_fn = torch.nn.functional.l1_loss
+# class L1FeatureLoss(object):
+#     def __init__(self):
+#         self.feature_extractor = model.VGGFeatureExtractor(device=device)
+#         self.loss_fn = torch.nn.functional.l1_loss
 
-    def __call__(self, y_pred, y_true, ):
-        true_features = self.feature_extractor(y_true)
-        pred_features = self.feature_extractor(y_pred)
-        err = [self.loss_fn(pred, true) for pred, true in zip(pred_features, true_features)]
-        return torch.mean(torch.stack(err))
+#     def __call__(self, y_pred, y_true, ):
+#         true_features = self.feature_extractor(y_true)
+#         pred_features = self.feature_extractor(y_pred)
+#         err = [self.loss_fn(pred, true) for pred, true in zip(pred_features, true_features)]
+#         return torch.mean(torch.stack(err))
 
 
 
@@ -904,7 +904,7 @@ def get_pipeline_unconstrained_video_reconstruction_rnn_out3(cfg):
         # pdb.enable()
         # stimulation_sequence, rnn_output, hidden_state = encoder(frames, hidden_state)
         amplitude_seq, pulse_width_seq, frequency_seq, rnn_output, hidden_state = encoder(frames, hidden_state)
-
+        # print('sh',amplitude_seq.shape, pulse_width_seq.shape, frequency_seq.shape)
         # amplitude_seq = amplitude_seq.permute(1, 0, 2)
         # pulse_width_seq = pulse_width_seq.permute(1, 0, 2)
         # frequency_seq = frequency_seq.permute(1, 0, 2)

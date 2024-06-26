@@ -3,7 +3,7 @@ import os
 import pickle
 from glob import glob
 import torch
-import torchvision
+# import torchvision
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as T
 import torchvision.transforms.functional as F

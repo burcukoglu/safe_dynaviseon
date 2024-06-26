@@ -4,9 +4,9 @@ Description:
 general: 
     use_deterministic_algorithms: False
     batch_size: 2
-    device: 'cuda:4' #change
-    gpu : 4 #change
-    save_path : /home/burkuc/data/v_dy/kitty_zhao_sig_fps10_nomax_out3_allcons2onfr_coef2_s3 #sig_fps10 #tanh128 #./Out/Exp1_Nov28
+    device: 'cuda:8' #change
+    gpu : 8 #change
+    save_path : /home/burkuc/data/v_dy/kitty_zhao_sig_fps10_nomax_out3_allcons2onfr_coef2_test #kitty_zhao_sig_fps10_nomax_out3_allcons2onfr_coef2_s3 #sig_fps10 #tanh128 #./Out/Exp1_Nov28
     save_output: ['phosphenes', 'stimulation_amplitude', 'stimulation_pulse_width','stimulation_frequency', 'reconstruction', 'input', 'total_charge']  #['phosphenes', 'stimulation', 'reconstruction']
     seed: 3 #0
     

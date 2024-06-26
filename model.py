@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torchvision
+# import torchvision
 import math
 
 #added
@@ -324,34 +324,34 @@ class SafetyLayer(torch.nn.Module):
         return (out * self.output_scaling).clamp(1e-32,None)
 
 
-class VGGFeatureExtractor():
-    def __init__(self,layer_names=['1','3','6','8'], layer_depth=9 ,device='cpu'):
+# class VGGFeatureExtractor():
+#     def __init__(self,layer_names=['1','3','6','8'], layer_depth=9 ,device='cpu'):
         
-        # Load the VGG16 model
-        model = torchvision.models.vgg16(weights=torchvision.models.VGG16_Weights.IMAGENET1K_V1)
-        self.feature_extractor = torch.nn.Sequential(*[*model.features][:layer_depth]).to(device)
+#         # Load the VGG16 model
+#         model = torchvision.models.vgg16(weights=torchvision.models.VGG16_Weights.IMAGENET1K_V1)
+#         self.feature_extractor = torch.nn.Sequential(*[*model.features][:layer_depth]).to(device)
         
-        # Register a forward hook for each layer of interest
-        self.layers = {name: layer for name, layer in self.feature_extractor.named_children() if name in layer_names}
-        self.outputs = dict()
-        for name, layer in self.layers.items():
-            layer.__name__ = name
-            layer.register_forward_hook(self.store_output)
+#         # Register a forward hook for each layer of interest
+#         self.layers = {name: layer for name, layer in self.feature_extractor.named_children() if name in layer_names}
+#         self.outputs = dict()
+#         for name, layer in self.layers.items():
+#             layer.__name__ = name
+#             layer.register_forward_hook(self.store_output)
             
-    def store_output(self, layer, input, output):
-        self.outputs[layer.__name__] = output
+#     def store_output(self, layer, input, output):
+#         self.outputs[layer.__name__] = output
 
-    def __call__(self, x):
+#     def __call__(self, x):
         
-        # If grayscale, convert to RGB
-        if x.shape[1] == 1:
-            x = x.repeat(1,3,1,1)
+#         # If grayscale, convert to RGB
+#         if x.shape[1] == 1:
+#             x = x.repeat(1,3,1,1)
         
-        # Forward pass
-        self.feature_extractor(x)
-        activations = list(self.outputs.values())
+#         # Forward pass
+#         self.feature_extractor(x)
+#         activations = list(self.outputs.values())
         
-        return activations
+#         return activations
         
         
 

@@ -13,8 +13,8 @@ import itertools
 import matplotlib.pyplot as plt
 import time
 
-import torchvision
-import torchvision.models as models
+# import torchvision
+# import torchvision.models as models
 from torch.profiler import profile, record_function, ProfilerActivity
 
 
