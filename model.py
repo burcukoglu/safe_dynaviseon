@@ -32,20 +32,10 @@ def get_e2e_autoencoder(cfg):
 
     return encoder, decoder
 
-#added
+
 def get_e2e_recurrent_net(cfg):
 
-    # initialize encoder and decoder
-    # if cfg['output_steps'] is not None:
-    #     encoder = torch.nn.Sequential(E2E_Encoder(in_channels=cfg['in_channels'],
-    #                                               out_channels=cfg['out_channels'], #added
-    #                                                     n_electrodes=cfg['n_electrodes'],
-    #                                                     out_scaling=1.,
-    #                                                     out_activation=cfg['out_activation']), #'sigmoid'),
-    #                                   SafetyLayer(n_steps=10,
-    #                                                     order=2,
-    #                                                     out_scaling=cfg['output_scaling'])).to(cfg['device'])
-    # else:
+
     encoder = E2E_Encoder_RNN(in_channels=cfg['in_channels'], #added/changed from in_channels=1,
                                     out_channels=cfg['sequence_length'], # cfg['out_channels'], #added
                                     n_electrodes=cfg['n_electrodes'],
@@ -63,20 +53,9 @@ def get_e2e_recurrent_net(cfg):
 
     return encoder, decoder
 
-#added
 def get_e2e_recurrent_net_cons1_2fx(cfg):
 
-    # initialize encoder and decoder
-    # if cfg['output_steps'] is not None:
-    #     encoder = torch.nn.Sequential(E2E_Encoder(in_channels=cfg['in_channels'],
-    #                                               out_channels=cfg['out_channels'], #added
-    #                                                     n_electrodes=cfg['n_electrodes'],
-    #                                                     out_scaling=1.,
-    #                                                     out_activation=cfg['out_activation']), #'sigmoid'),
-    #                                   SafetyLayer(n_steps=10,
-    #                                                     order=2,
-    #                                                     out_scaling=cfg['output_scaling'])).to(cfg['device'])
-    # else:
+
     encoder = E2E_Encoder_RNN_cons1_2fx(in_channels=cfg['in_channels'], #added/changed from in_channels=1,
                                     out_channels=cfg['sequence_length'], # cfg['out_channels'], #added
                                     n_electrodes=cfg['n_electrodes'],
@@ -98,17 +77,7 @@ def get_e2e_recurrent_net_cons1_2fx(cfg):
 #added
 def get_e2e_recurrent_net_out3(cfg):
 
-    # initialize encoder and decoder
-    # if cfg['output_steps'] is not None:
-    #     encoder = torch.nn.Sequential(E2E_Encoder(in_channels=cfg['in_channels'],
-    #                                               out_channels=cfg['out_channels'], #added
-    #                                                     n_electrodes=cfg['n_electrodes'],
-    #                                                     out_scaling=1.,
-    #                                                     out_activation=cfg['out_activation']), #'sigmoid'),
-    #                                   SafetyLayer(n_steps=10,
-    #                                                     order=2,
-    #                                                     out_scaling=cfg['output_scaling'])).to(cfg['device'])
-    # else:
+
     encoder = E2E_Encoder_RNN_out3(in_channels=cfg['in_channels'], #added/changed from in_channels=1,
                                     out_channels=cfg['sequence_length'], # cfg['out_channels'], #added
                                     n_electrodes=cfg['n_electrodes'],
@@ -126,20 +95,9 @@ def get_e2e_recurrent_net_out3(cfg):
 
     return encoder, decoder
 
-#added
+
 def get_e2e_recurrent_net_out32(cfg):
 
-    # initialize encoder and decoder
-    # if cfg['output_steps'] is not None:
-    #     encoder = torch.nn.Sequential(E2E_Encoder(in_channels=cfg['in_channels'],
-    #                                               out_channels=cfg['out_channels'], #added
-    #                                                     n_electrodes=cfg['n_electrodes'],
-    #                                                     out_scaling=1.,
-    #                                                     out_activation=cfg['out_activation']), #'sigmoid'),
-    #                                   SafetyLayer(n_steps=10,
-    #                                                     order=2,
-    #                                                     out_scaling=cfg['output_scaling'])).to(cfg['device'])
-    # else:
     encoder = E2E_Encoder_RNN_out32(in_channels=cfg['in_channels'], #added/changed from in_channels=1,
                                     out_channels=cfg['sequence_length'], # cfg['out_channels'], #added
                                     n_electrodes=cfg['n_electrodes'],
@@ -158,7 +116,7 @@ def get_e2e_recurrent_net_out32(cfg):
 
     return encoder, decoder
 
-#added
+
 def get_e2e_autoencoder2(cfg):
 
     # initialize encoder and decoder
@@ -185,62 +143,40 @@ def get_e2e_autoencoder2(cfg):
     return encoder, decoder
 
 def get_Zhao_autoencoder(cfg):
-    #encoder = ZhaoEncoder(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes']).to(cfg['device'])
-    #changed/added
+
     encoder = ZhaoEncoder(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes'], out_scaling=cfg['output_scaling'], constrained=cfg['constrained']).to(cfg['device'])
-    # encoder = ZhaoEncoder_clamp(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes'], out_scaling=cfg['output_scaling']).to(cfg['device'])
     decoder = ZhaoDecoder(out_channels=cfg['out_channels'], out_activation=cfg['out_activation']).to(cfg['device'])
-    #changed/added
-    # encoder = ZhaoEncoder(in_channels=cfg['in_channels'], out_channels=cfg['out_channels'], n_electrodes=cfg['n_electrodes']).to(cfg['device'])
-    # decoder = ZhaoDecoder(out_channels=cfg['out_channels'], in_channels=cfg['in_channels'], out_activation=cfg['out_activation']).to(cfg['device'])
 
     return encoder, decoder
 
-#added
+
 def get_Zhao_autoencoder_cons1_2fx(cfg):
-    #encoder = ZhaoEncoder(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes']).to(cfg['device'])
-    #changed/added
+
     encoder = ZhaoEncoder_cons1_2fx(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes'], out_scaling=cfg['output_scaling'], constrained=cfg['constrained'], constrained_based_on=cfg['constrained_based_on'], constraint_coeff=cfg['constraint_coeff'], constrained_param=cfg['constrained_param']).to(cfg['device'])
-    # encoder = ZhaoEncoder_clamp(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes'], out_scaling=cfg['output_scaling']).to(cfg['device'])
     decoder = ZhaoDecoder(out_channels=cfg['out_channels'], out_activation=cfg['out_activation']).to(cfg['device'])
-    #changed/added
-    # encoder = ZhaoEncoder(in_channels=cfg['in_channels'], out_channels=cfg['out_channels'], n_electrodes=cfg['n_electrodes']).to(cfg['device'])
-    # decoder = ZhaoDecoder(out_channels=cfg['out_channels'], in_channels=cfg['in_channels'], out_activation=cfg['out_activation']).to(cfg['device'])
 
     return encoder, decoder
 
-#added
+
 def get_Zhao_autoencoder2(cfg):
-    # encoder = ZhaoEncoder(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes']).to(cfg['device'])
-    #changed/added
+
     encoder = ZhaoEncoder2(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes'], sequence_length=cfg['sequence_length'], output_scaling=cfg['output_scaling']).to(cfg['device'])
     decoder = ZhaoDecoder(out_channels=cfg['out_channels'], out_activation=cfg['out_activation']).to(cfg['device'])
-    #changed/added
-    # encoder = ZhaoEncoder(in_channels=cfg['in_channels'], out_channels=cfg['out_channels'], n_electrodes=cfg['n_electrodes']).to(cfg['device'])
-    # decoder = ZhaoDecoder(out_channels=cfg['out_channels'], in_channels=cfg['in_channels'], out_activation=cfg['out_activation']).to(cfg['device'])
 
     return encoder, decoder
 
 def get_Zhao_autoencoder_out3(cfg): 
-    #encoder = ZhaoEncoder(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes']).to(cfg['device'])
-    #changed/added
+
     encoder = ZhaoEncoder_out3(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes'], out_scaling=cfg['output_scaling'], constrained=cfg['constrained']).to(cfg['device'])
     decoder = ZhaoDecoder(out_channels=cfg['out_channels'], out_activation=cfg['out_activation']).to(cfg['device'])
-    #changed/added
-    # encoder = ZhaoEncoder(in_channels=cfg['in_channels'], out_channels=cfg['out_channels'], n_electrodes=cfg['n_electrodes']).to(cfg['device'])
-    # decoder = ZhaoDecoder(out_channels=cfg['out_channels'], in_channels=cfg['in_channels'], out_activation=cfg['out_activation']).to(cfg['device'])
 
     return encoder, decoder
 
 #added
 def get_Zhao_autoencoder_out32(cfg): 
-    #encoder = ZhaoEncoder(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes']).to(cfg['device'])
-    #changed/added
+
     encoder = ZhaoEncoder_out32(in_channels=cfg['in_channels'], n_electrodes=cfg['n_electrodes'], out_scaling=cfg['output_scaling'], constrained=cfg['constrained'], constrained_based_on=cfg['constrained_based_on'], constraint_coeff=cfg['constraint_coeff']).to(cfg['device'])
     decoder = ZhaoDecoder(out_channels=cfg['out_channels'], out_activation=cfg['out_activation']).to(cfg['device'])
-    #changed/added
-    # encoder = ZhaoEncoder(in_channels=cfg['in_channels'], out_channels=cfg['out_channels'], n_electrodes=cfg['n_electrodes']).to(cfg['device'])
-    # decoder = ZhaoDecoder(out_channels=cfg['out_channels'], in_channels=cfg['in_channels'], out_activation=cfg['out_activation']).to(cfg['device'])
 
     return encoder, decoder
 
@@ -453,54 +389,29 @@ class E2E_Encoder_RNN(nn.Module):
         self.flatten = nn.Flatten(start_dim=2)
         self.dense = nn.Linear(1024,rnn_input_size)
         self.rnn = nn.LSTM(input_size=rnn_input_size, hidden_size=hidden_size, num_layers=num_layers)
-        # self.rnn = nn.LSTM(input_size=512, hidden_size=512, num_layers=num_layers)
         self.readout = nn.Linear(hidden_size, n_electrodes)
-        # frames torch.Size([2, 10, 128, 128])
-        # encoded torch.Size([2, 10, 32, 32])
-        # flattened torch.Size([2, 10, 1024]) #does it make sense to g(o from 1024 to 2000?
+
 
         if self.constrain:
             self.out_activation=nn.Sigmoid()
         else:
             self.out_activation=nn.ReLU()
 
-        # old:
-        # dense torch.Size([2, 10, 2000])
-        # permute torch.Size([10, 2, 2000]) #does it make sense to go from 2000 to 1000 via rnn?
-
-        # new:
-        # dense torch.Size([2, 10, 512])
-        # permute torch.Size([10, 2, 512])
-
-        # rnn_out torch.Size([10, 2, 1000])
-        # h torch.Size([1, 2, 1000])
-        # c torch.Size([1, 2, 1000])
-        # stimulation torch.Size([10, 2, 1000])
 
     def forward(self, x, hidden_state):
         h = hidden_state[0]
         c = hidden_state[1]
         out = self.enc(x)
-        # print('encoded', self.out.shape)
         out= self.flatten(out)
-        # print('flattened', self.out.shape)
         out = self.dense(out)
-        # print('dense', self.out.shape)
         out= out.permute(1,0,2)
-        # print('permute', self.out.shape)
         rnn_out, (h,c) = self.rnn(out, (h,c))
-        # print('rnnout1',rnn_out.shape, rnn_out.min(), rnn_out.max())
-        rnn_out = self.readout(rnn_out) #added
-        # print('rnnout2',rnn_out.shape, rnn_out.min(), rnn_out.max())
+        rnn_out = self.readout(rnn_out) 
         stimulation = self.out_activation(rnn_out)
-        # print('stimulation1',stimulation.shape, stimulation.min(), stimulation.max())
         if self.constrain:
             
             stimulation = stimulation*self.output_scaling
-            # print('stimulation2',stimulation.shape, stimulation.min(), stimulation.max())
-        # stimulation = self.out_activation(rnn_out)*self.output_scaling
 
-        # print('stimulation', stimulation.shape)
         return stimulation, rnn_out, (h,c) #torch.Size([10, 2, 1000]),  torch.Size([10, 2, 1000]), (torch.Size([1, 2, 1000]), torch.Size([1, 2, 1000]))
 
 #added
@@ -569,22 +480,14 @@ class E2E_Encoder_RNN_out3(nn.Module):
         h = hidden_state[0]
         c = hidden_state[1]
         out = self.enc(x)
-        # print('encoded', self.out.shape)
         out= self.flatten(out)
-        # print('flattened', self.out.shape)
         out = self.dense(out)
-        # print('dense', self.out.shape)
         out= out.permute(1,0,2)
-        # print('permute', self.out.shape)
         rnn_out, (h,c) = self.rnn(out, (h,c))
-        # print('rnnout', rnn_out.shape)
 
-        amplitude = self.readout_amplitude(rnn_out) #added
-        pulse_width = self.readout_pulse_width(rnn_out) #added
-        frequency = self.readout_frequency(rnn_out) #added
-        # print('amp', amplitude.shape)
-        # print('pulse_width', pulse_width.shape)
-        # print('frequency', frequency.shape)
+        amplitude = self.readout_amplitude(rnn_out) 
+        pulse_width = self.readout_pulse_width(rnn_out) 
+        frequency = self.readout_frequency(rnn_out) 
 
         amplitude = self.activation_amp(amplitude)
         pulse_width = self.activation_pw(pulse_width)
@@ -597,7 +500,6 @@ class E2E_Encoder_RNN_out3(nn.Module):
         if self.constrained[2]:
             frequency = frequency*self.output_scaling_freq
         
-        # print('stimulation', stimulation.shape)
         return amplitude, pulse_width, frequency, rnn_out, (h,c) #torch.Size([10, 2, 1000]),  torch.Size([10, 2, 1000]), (torch.Size([1, 2, 1000]), torch.Size([1, 2, 1000]))
 
 #added
@@ -621,9 +523,6 @@ class E2E_Encoder_RNN_out32(nn.Module):
         #                        'relu': nn.ReLU(),
         #                        'softmax':nn.Softmax(dim=1)}[out_activation]
 
-        # self.output_scaling_amp = 500.0e-6 #out_scaling
-        # self.output_scaling_pw = 500.0e-6 #out_scaling
-        # self.output_scaling_freq = 500 #out_scaling
 
         self.constrained = constrained
 
@@ -674,13 +573,9 @@ class E2E_Encoder_RNN_out32(nn.Module):
         h = hidden_state[0]
         c = hidden_state[1]
         out = self.enc(x)
-        # print('encoded', self.out.shape)
         out= self.flatten(out)
-        # print('flattened', self.out.shape)
         out = self.dense(out)
-        # print('dense', self.out.shape)
         out= out.permute(1,0,2)
-        # print('permute', self.out.shape)
         rnn_out, (h,c) = self.rnn(out, (h,c))
 
         amplitude = self.readout_amplitude(rnn_out) #added
@@ -700,8 +595,6 @@ class E2E_Encoder_RNN_out32(nn.Module):
                 frequency = frequency*self.output_scaling_freq_limit
 
             if self.constrained[1]:
-                # output_scaling_pw = dclamp(1/frequency, 0, self.output_scaling_pw_limit)
-                # pulse_width = pulse_width*output_scaling_pw
                 output_scaling_pw = torch.clamp(1/(self.constraint_coeff*frequency), 0, self.output_scaling_pw_limit)
                 pulse_width = pulse_width * output_scaling_pw.detach()
 
@@ -711,15 +604,12 @@ class E2E_Encoder_RNN_out32(nn.Module):
                 pulse_width = pulse_width*self.output_scaling_pw_limit
 
             if self.constrained[2]:
-                # output_scaling_freq = dclamp(1/pulse_width, 0, self.output_scaling_freq_limit)
-                # frequency = frequency*output_scaling_freq
                 output_scaling_freq = torch.clamp(1/(self.constraint_coeff*pulse_width), 0, self.output_scaling_freq_limit)
                 frequency = frequency * output_scaling_freq.detach()
         
-        # print('stimulation', stimulation.shape)
         return amplitude, pulse_width, frequency, rnn_out, (h,c) #torch.Size([10, 2, 1000]),  torch.Size([10, 2, 1000]), (torch.Size([1, 2, 1000]), torch.Size([1, 2, 1000]))
 
-#added
+
 class E2E_Encoder_RNN_cons1_2fx(nn.Module):
     """
     Simple non-generic encoder class that receives 128x128 input and outputs 32x32 feature map as stimulation protocol
@@ -740,10 +630,6 @@ class E2E_Encoder_RNN_cons1_2fx(nn.Module):
         #                        'sigmoid': nn.Sigmoid(),
         #                        'relu': nn.ReLU(),
         #                        'softmax':nn.Softmax(dim=1)}[out_activation]
-
-        # self.output_scaling_amp = 500.0e-6 #out_scaling
-        # self.output_scaling_pw = 500.0e-6 #out_scaling
-        # self.output_scaling_freq = 500 #out_scaling
 
         self.constrained = constrained
 
@@ -770,100 +656,34 @@ class E2E_Encoder_RNN_cons1_2fx(nn.Module):
         self.rnn = nn.LSTM(input_size=rnn_input_size, hidden_size=hidden_size, num_layers=num_layers)
 
         self.readout = nn.Linear(hidden_size, n_electrodes)
-        # self.readout_amplitude = nn.Linear(hidden_size, n_electrodes)
-        # self.readout_pulse_width = nn.Linear(hidden_size, n_electrodes)
-        # self.readout_frequency = nn.Linear(hidden_size, n_electrodes)
 
         if self.constrained:
             self.activation = nn.Sigmoid()
         else: 
             self.activation = nn.ReLU()
 
-        # if self.constrained[0]:
-        #     self.activation_amp = nn.Sigmoid()
-        # else: 
-        #     self.activation_amp = nn.ReLU()
-        
-        # if self.constrained[1]:
-        #     self.activation_pw = nn.Sigmoid()
-        # else: 
-        #     self.activation_pw = nn.ReLU()
-
-        # if self.constrained[2]:
-        #     self.activation_freq = nn.Sigmoid()
-        # else: 
-        #     self.activation_freq = nn.ReLU()
-        
-
 
     def forward(self, x, hidden_state):
         h = hidden_state[0]
         c = hidden_state[1]
         out = self.enc(x)
-        # print('encoded', self.out.shape)
         out= self.flatten(out)
-        # print('flattened', self.out.shape)
         out = self.dense(out)
-        # print('dense', self.out.shape)
         out= out.permute(1,0,2)
-        # print('permute', self.out.shape)
         rnn_out, (h,c) = self.rnn(out, (h,c))
-        # print('rnnout1',rnn_out.shape, rnn_out.min(), rnn_out.max())
-        rnn_out = self.readout(rnn_out) #added
-        # print('rnnout2',rnn_out.shape, rnn_out.min(), rnn_out.max())
+        rnn_out = self.readout(rnn_out) 
+
         stimulation = self.activation(rnn_out)
-        # print('stimulation1',stimulation.shape, stimulation.min(), stimulation.max())
-
-        # rnn_out, (h,c) = self.rnn(out, (h,c))
-
-        # amplitude = self.readout_amplitude(rnn_out) #added
-        # pulse_width = self.readout_pulse_width(rnn_out) #added
-        # frequency = self.readout_frequency(rnn_out) #added
-
-        # amplitude = self.activation_amp(amplitude)
-        # amplitude = self.activation_amp(amplitude)
-        # pulse_width = self.activation_pw(pulse_width)
-        # frequency = self.activation_freq(frequency)
 
         if self.constrained_param == "amplitude":
             stimulation = stimulation*self.output_scaling_amp_limit
-        # if self.constrained[0]:
-        #     amplitude = amplitude*self.output_scaling_amp_limit
-            # return out, None, None
         
         elif self.constrained_param == "pulse_width":
             stimulation = stimulation*self.output_scaling_pw_limit
-            # return None, out, None
 
         elif self.constrained_param == "frequency":
             stimulation = stimulation*self.output_scaling_freq_limit
 
-        # if self.constrained[0]:
-        #     amplitude = amplitude*self.output_scaling_amp_limit
-        
-        # if self.constrained_based_on == 'freq':
-        #     #on fr
-        #     if self.constrained[2]:
-        #         frequency = frequency*self.output_scaling_freq_limit
-
-        #     if self.constrained[1]:
-        #         # output_scaling_pw = dclamp(1/frequency, 0, self.output_scaling_pw_limit)
-        #         # pulse_width = pulse_width*output_scaling_pw
-        #         output_scaling_pw = torch.clamp(1/(self.constraint_coeff*frequency), 0, self.output_scaling_pw_limit)
-        #         pulse_width = pulse_width * output_scaling_pw.detach()
-
-        # elif self.constrained_based_on == 'pw':
-        #     #on pw
-        #     if self.constrained[1]:
-        #         pulse_width = pulse_width*self.output_scaling_pw_limit
-
-        #     if self.constrained[2]:
-        #         # output_scaling_freq = dclamp(1/pulse_width, 0, self.output_scaling_freq_limit)
-        #         # frequency = frequency*output_scaling_freq
-        #         output_scaling_freq = torch.clamp(1/(self.constraint_coeff*pulse_width), 0, self.output_scaling_freq_limit)
-        #         frequency = frequency * output_scaling_freq.detach()
-        
-        # print('stimulation', stimulation.shape)
         return stimulation, rnn_out, (h,c) #torch.Size([10, 2, 1000]),  torch.Size([10, 2, 1000]), (torch.Size([1, 2, 1000]), torch.Size([1, 2, 1000]))
 
 
@@ -897,23 +717,8 @@ class E2E_Decoder(nn.Module):
     def forward(self, x):
         return self.model(x)
 
-# class E2E_RealisticPhospheneSimulator(nn.Module):
-#     """A realistic simulator, using stimulation vectors to form a phosphene representation
-#     in: a 1024 length stimulation vector
-#     out: 256x256 phosphene representation
-#     """
-#     def __init__(self, cfg, params, r, phi):
-#         super(E2E_RealisticPhospheneSimulator, self).__init__()
-#         self.simulator = GaussianSimulator(params, r, phi, batch_size=cfg.batch_size, device=cfg.device)
-        
-#     def forward(self, stimulation):
-#         phosphenes = self.simulator(stim_amp=stimulation).clamp(0,1)
-#         phosphenes = phosphenes.view(phosphenes.shape[0], 1, phosphenes.shape[1], phosphenes.shape[2])
-#         return phosphenes
 
 class ZhaoEncoder(nn.Module):
-    # def __init__(self, in_channels=3,n_electrodes=638, out_channels=1):
-    #added
     def __init__(self, in_channels=3,n_electrodes=638, out_channels=1, out_scaling=128e-6, constrained=True):
         super(ZhaoEncoder, self).__init__()
 
@@ -936,27 +741,17 @@ class ZhaoEncoder(nn.Module):
             self.out_activation = nn.Sigmoid()
         else:
             self.out_activation = nn.ReLU()
-            #changed for 0-128 microamper limit, original was different
-            
-            #Ssuboptimal learning changed again
-            # nn.Tanh()
-        # )
 
     def forward(self, x):
         out = self.model(x)
         out = self.out_activation(out) #added
         out = out.squeeze(dim=1)
-        # self.out = self.out*1e-4
         if self.constrain:
             out = out*self.output_scaling
-        #added for tanh
-        # self.out = 0.5*(self.out+torch.ones(self.out.shape).to(self.out.device))
         return out
 
-#added
+
 class ZhaoEncoder_clamp(nn.Module):
-    # def __init__(self, in_channels=3,n_electrodes=638, out_channels=1):
-    #added
     def __init__(self, in_channels=3,n_electrodes=638, out_channels=1, out_scaling=128e-6):
         super(ZhaoEncoder_clamp, self).__init__()
 
@@ -972,29 +767,16 @@ class ZhaoEncoder_clamp(nn.Module):
 
             nn.Flatten(start_dim=3),
             nn.Linear(1024,n_electrodes),
-            # nn.ReLU()
-            #changed for 0-128 microamper limit, original was different
 
-            
-            # nn.Sigmoid() #COMMENTED changed for clamp
-            
-            #Ssuboptimal learning changed again
-            # nn.Tanh()
         )
-        # self.clamp= DifferentiableClamp()
+
         self.min_amp = 0 
         self.max_amp = out_scaling
 
     def forward(self, x):
         out = self.model(x)
-        # print('bef clamp', out.min(), out.max())
-        out = dclamp(out, self.min_amp, self.max_amp) #added
-        # print('aft clamp', out.min(), out.max())
-        out = out.squeeze(dim=1)
-        # self.out = self.out*1e-4
-        # out = out*self.output_scaling
-        #added for tanh
-        # self.out = 0.5*(self.out+torch.ones(self.out.shape).to(self.out.device))
+        out = dclamp(out, self.min_amp, self.max_amp) 
+        out = out.squeeze(dim=1) 
         return out
 
 class ZhaoEncoder2(nn.Module):
@@ -1039,12 +821,10 @@ class ZhaoEncoder2(nn.Module):
         return self.out
 
 class ZhaoEncoder_out3(nn.Module):
-    # def __init__(self, in_channels=3,n_electrodes=638, out_channels=1):
-    #added
     def __init__(self, in_channels=3,n_electrodes=638, out_channels=3, out_scaling=128e-6, constrained=[True, True, True]):
         super(ZhaoEncoder_out3, self).__init__()
 
-        # self.output_scaling = out_scaling
+
         self.output_scaling_amp = 500.0e-6 #out_scaling
         self.output_scaling_pw = 500.0e-6 #out_scaling
         self.output_scaling_freq = 500 #out_scaling
@@ -1062,12 +842,10 @@ class ZhaoEncoder_out3(nn.Module):
             nn.Flatten(start_dim=3)
             ) #,
         
-        # self.linear =   nn.Linear(1024,n_electrodes) #,
         self.amplitude =   nn.Linear(1024,n_electrodes)
         self.pulse_width =   nn.Linear(1024,n_electrodes)
         self.frequency =   nn.Linear(1024,n_electrodes)
-            # nn.ReLU()
-            #changed for 0-128 microamper limit, original was different
+
             
         if self.constrained[0]:
             self.activation_amp = nn.Sigmoid()
@@ -1084,55 +862,32 @@ class ZhaoEncoder_out3(nn.Module):
         else: 
             self.activation_freq = nn.ReLU()
 
-        # self.activation_amp = nn.Sigmoid()
-        # self.activation_pw = nn.ReLU()
-        # self.activation_freq = nn.ReLU()
-            
-            #Ssuboptimal learning changed again
-            # nn.Tanh()
-        # )
 
     def forward(self, x):
         out = self.model(x)
-        # print('model',out.shape)
         amplitude = self.amplitude(out)
         pulse_width = self.pulse_width(out)
         frequency = self.frequency(out)
-        # print('amplitude', amplitude.shape)
-        # print('pulse_width', pulse_width.shape)
-        # print('frequency', frequency.shape)
 
-        # amplitude = self.activation(amplitude)
-        # pulse_width = self.activation(pulse_width)
-        # frequency = self.activation(frequency)
         amplitude = self.activation_amp(amplitude)
         pulse_width = self.activation_pw(pulse_width)
         frequency = self.activation_freq(frequency)
 
-        # out = out.squeeze(dim=1)
         amplitude = amplitude.squeeze(dim=1)
         pulse_width = pulse_width.squeeze(dim=1)
         frequency = frequency.squeeze(dim=1)
-        # print('sq amp',amplitude.shape)
-        # print('sq pw',pulse_width.shape)
-        # print('sq freq',frequency.shape)
-        # self.out = self.out*1e-4
-        # out = out*self.output_scaling
+
         if self.constrained[0]:
             amplitude = amplitude*self.output_scaling_amp
         if self.constrained[1]:
             pulse_width = pulse_width*self.output_scaling_pw
         if self.constrained[2]:
             frequency = frequency*self.output_scaling_freq
-        #added for tanh
-        # self.out = 0.5*(self.out+torch.ones(self.out.shape).to(self.out.device))
+
         return amplitude, pulse_width, frequency
-        # return (out, out, out)
 
 #added
 class ZhaoEncoder_out32(nn.Module):
-    # def __init__(self, in_channels=3,n_electrodes=638, out_channels=1):
-    #added
     def __init__(self, in_channels=3,n_electrodes=638, out_channels=3, out_scaling=128e-6, constrained=[True, True, True], constrained_based_on='freq', constraint_coeff=2):
         super(ZhaoEncoder_out32, self).__init__()
 
@@ -1157,12 +912,10 @@ class ZhaoEncoder_out32(nn.Module):
             nn.Flatten(start_dim=3)
             ) #,
         
-        # self.linear =   nn.Linear(1024,n_electrodes) #,
         self.amplitude =   nn.Linear(1024,n_electrodes)
         self.pulse_width =   nn.Linear(1024,n_electrodes)
         self.frequency =   nn.Linear(1024,n_electrodes)
-            # nn.ReLU()
-            #changed for 0-128 microamper limit, original was different
+
             
         if self.constrained[0]:
             self.activation_amp = nn.Sigmoid()
@@ -1179,40 +932,24 @@ class ZhaoEncoder_out32(nn.Module):
         else: 
             self.activation_freq = nn.ReLU()
 
-        # self.activation_amp = nn.Sigmoid()
-        # self.activation_pw = nn.ReLU()
-        # self.activation_freq = nn.ReLU()
-            
-            #Ssuboptimal learning changed again
-            # nn.Tanh()
-        # )
+
 
     def forward(self, x):
         out = self.model(x)
-        # print('model',out.shape)
+
         amplitude = self.amplitude(out)
         pulse_width = self.pulse_width(out)
         frequency = self.frequency(out)
-        # print('amplitude', amplitude.shape)
-        # print('pulse_width', pulse_width.shape)
-        # print('frequency', frequency.shape)
-
-        # amplitude = self.activation(amplitude)
-        # pulse_width = self.activation(pulse_width)
-        # frequency = self.activation(frequency)
+ 
         amplitude = self.activation_amp(amplitude)
         pulse_width = self.activation_pw(pulse_width)
         frequency = self.activation_freq(frequency)
 
-        # out = out.squeeze(dim=1)
+
         amplitude = amplitude.squeeze(dim=1)
         pulse_width = pulse_width.squeeze(dim=1)
         frequency = frequency.squeeze(dim=1)
-        # print('sq amp',amplitude.shape)
-        # print('sq pw',pulse_width.shape)
-        # print('sq freq',frequency.shape)
-        # self.out = self.out*1e-4
-        # out = out*self.output_scaling
+
         if self.constrained[0]:
             amplitude = amplitude*self.output_scaling_amp_limit
         
@@ -1222,32 +959,24 @@ class ZhaoEncoder_out32(nn.Module):
                 frequency = frequency*self.output_scaling_freq_limit
 
             if self.constrained[1]:
-                # output_scaling_pw = dclamp(1/frequency, 0, self.output_scaling_pw_limit)
                 output_scaling_pw = torch.clamp(1/(self.constraint_coeff*frequency), 0, self.output_scaling_pw_limit)
                 pulse_width = pulse_width * output_scaling_pw.detach()
 
         elif self.constrained_based_on == 'pw':
             #on pw
             if self.constrained[1]:
-                # print('limit',self.output_scaling_pw_limit)
-                # print('pulse_width bef',  pulse_width.min(),pulse_width.max(), pulse_width.isnan().any())
+
                 pulse_width = pulse_width*self.output_scaling_pw_limit
-                # print('pulse_width aft', pulse_width.min(),pulse_width.max(), pulse_width.isnan().any())
 
             if self.constrained[2]:
-                # output_scaling_freq = dclamp(1/pulse_width, 0, self.output_scaling_freq_limit)
                 output_scaling_freq = torch.clamp(1/(self.constraint_coeff*pulse_width), 0, self.output_scaling_freq_limit)
                 frequency = frequency * output_scaling_freq.detach()
 
-        #added for tanh
-        # self.out = 0.5*(self.out+torch.ones(self.out.shape).to(self.out.device))
         return amplitude, pulse_width, frequency
-        # return (out, out, out)
 
-#added
+
 class ZhaoEncoder_cons1_2fx(nn.Module):
-    # def __init__(self, in_channels=3,n_electrodes=638, out_channels=1):
-    #added
+
     def __init__(self, in_channels=3,n_electrodes=638, out_channels=3, out_scaling=128e-6, constrained=True, constrained_based_on='freq', constraint_coeff=2, constrained_param='amplitude'):
         super(ZhaoEncoder_cons1_2fx, self).__init__()
 
@@ -1274,114 +1003,33 @@ class ZhaoEncoder_cons1_2fx(nn.Module):
             ) #,
         
         self.linear =   nn.Linear(1024,n_electrodes) #,
-        # self.amplitude =   nn.Linear(1024,n_electrodes)
-        # self.pulse_width =   nn.Linear(1024,n_electrodes)
-        # self.frequency =   nn.Linear(1024,n_electrodes)
-            # nn.ReLU()
-            #changed for 0-128 microamper limit, original was different
+
         
         if self.constrained:
             self.activation = nn.Sigmoid()
         else: 
             self.activation = nn.ReLU()
 
-        # if self.constrained[0]:
-        #     self.activation_amp = nn.Sigmoid()
-        # else: 
-        #     self.activation_amp = nn.ReLU()
-        
-        # if self.constrained[1]:
-        #     self.activation_pw = nn.Sigmoid()
-        # else: 
-        #     self.activation_pw = nn.ReLU()
 
-        # if self.constrained[2]:
-        #     self.activation_freq = nn.Sigmoid()
-        # else: 
-        #     self.activation_freq = nn.ReLU()
-
-        # self.activation_amp = nn.Sigmoid()
-        # self.activation_pw = nn.ReLU()
-        # self.activation_freq = nn.ReLU()
-            
-            #Ssuboptimal learning changed again
-            # nn.Tanh()
-        # )
 
     def forward(self, x):
         out = self.model(x)
-        # print('model',out.shape)
 
         out = self.linear(out)
-        # amplitude = self.amplitude(out)
-        # pulse_width = self.pulse_width(out)
-        # frequency = self.frequency(out)
-
-        # print('amplitude', amplitude.shape)
-        # print('pulse_width', pulse_width.shape)
-        # print('frequency', frequency.shape)
-
 
         out = self.activation(out)
-        # amplitude = self.activation_amp(amplitude)
-        # pulse_width = self.activation_pw(pulse_width)
-        # frequency = self.activation_freq(frequency)
 
         out = out.squeeze(dim=1)
-        # amplitude = amplitude.squeeze(dim=1)
-        # pulse_width = pulse_width.squeeze(dim=1)
-        # frequency = frequency.squeeze(dim=1)
 
-        # print('sq amp',amplitude.shape)
-        # print('sq pw',pulse_width.shape)
-        # print('sq freq',frequency.shape)
-        # self.out = self.out*1e-4
-        # out = out*self.output_scaling
-        # amplitude, pulse_width, frequency = None, None, None
         if self.constrained_param == "amplitude":
             out = out*self.output_scaling_amp_limit
-        # if self.constrained[0]:
-        #     amplitude = amplitude*self.output_scaling_amp_limit
-            # return out, None, None
-        
+
         elif self.constrained_param == "pulse_width":
             out = out*self.output_scaling_pw_limit
-            # return None, out, None
 
         elif self.constrained_param == "frequency":
             out = out*self.output_scaling_freq_limit
-            # return None, None, out
 
-        # if self.constrained_based_on == 'freq':
-        #     #on fr
-        #     if self.constrained[2]:
-        #         frequency = frequency*self.output_scaling_freq_limit
-
-        #     if self.constrained[1]:
-        #         # output_scaling_pw = dclamp(1/frequency, 0, self.output_scaling_pw_limit)
-        #         output_scaling_pw = torch.clamp(1/(self.constraint_coeff*frequency), 0, self.output_scaling_pw_limit)
-        #         pulse_width = pulse_width * output_scaling_pw.detach()
-
-        # elif self.constrained_based_on == 'pw':
-        #     #on pw
-        #     if self.constrained[1]:
-        #         # print('limit',self.output_scaling_pw_limit)
-        #         # print('pulse_width bef',  pulse_width.min(),pulse_width.max(), pulse_width.isnan().any())
-        #         pulse_width = pulse_width*self.output_scaling_pw_limit
-        #         # print('pulse_width aft', pulse_width.min(),pulse_width.max(), pulse_width.isnan().any())
-
-        #     if self.constrained[2]:
-        #         # output_scaling_freq = dclamp(1/pulse_width, 0, self.output_scaling_freq_limit)
-        #         output_scaling_freq = torch.clamp(1/(self.constraint_coeff*pulse_width), 0, self.output_scaling_freq_limit)
-        #         frequency = frequency * output_scaling_freq.detach()
-
-        #added for tanh
-        # self.out = 0.5*(self.out+torch.ones(self.out.shape).to(self.out.device))
-        # print('enc amp', amplitude.min(), amplitude.max())
-        # print('enc pulse_width', pulse_width.min(), pulse_width.max())
-        # print('enc frequency', frequency.min(), frequency.max())
-        # return amplitude, pulse_width, frequency
-        # return (out, out, out)
         return out
 
 class ZhaoDecoder(nn.Module):
@@ -1407,7 +1055,6 @@ class ZhaoDecoder(nn.Module):
         out = self.model(x)
         return out
 
-#added
 
 class ResNetEncoder(nn.Module):
     def __init__(self):
@@ -1424,8 +1071,6 @@ class ResNetEncoder(nn.Module):
             self.layers['res'+layer+'_0'] =  ResidualBlock2(channels)
             self.layers['res'+layer+'_1'] =  ResidualBlock2(channels)
 
-        # for key, val in self.layers.items():
-        #     self.register_child(self.layers[key])
 
     def forward(self, x):
         for i, channels in enumerate(self.channel_list):
@@ -1441,7 +1086,6 @@ class ResNetEncoder(nn.Module):
 class ResidualBlock2(nn.Module):
     def __init__(self, in_channels):
         super(ResidualBlock2, self).__init__()
-        # with self.name_scope():
         self.conv0 = nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=3, stride=1, padding=1)
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=3, stride=1, padding=1)
 
