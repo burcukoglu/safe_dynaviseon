@@ -10,3 +10,7 @@ training2.py
 init_training2.py
 local_datasets2.py
 _config/exp2_nov30.yaml
+visualplot.ipynb
+visualplot_revision.ipynb
+visualplot_det.ipynb
+visualize.ipynb

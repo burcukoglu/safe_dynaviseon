@@ -1,12 +1,12 @@
 Description:
-    model_name: exp1_jan_sig_fps10_slide_nomax_out3_allcons2onfr_coef2_recon_s1 #exp1_jan_sig_fps10
+    model_name: exp1_jan_sig_fps10_slide_nomax_out3_allcons2onfr_coef2_recon_s1_det_final #exp1_jan_sig_fps10
 
 general: 
-    use_deterministic_algorithms: False
+    use_deterministic_algorithms: True
     batch_size: 2
-    device: 'cuda:8' #change
-    gpu : 8 #change
-    save_path : /home/burkuc/data/v_dy/kitty_zhao_sig_fps10_nomax_out3_allcons2onfr_coef2_recon_test #kitty_zhao_sig_fps10_nomax_out3_allcons2onfr_coef2_recon_s1 #sig_fps10 #tanh128 #./Out/Exp1_Nov28
+    device: 'cuda:1' #change
+    gpu : 1 #change
+    save_path : /home/burkuc/data/v_dy/kitty_zhao_sig_fps10_nomax_out3_allcons2onfr_coef2_recon_s1_det_final #kitty_zhao_sig_fps10_nomax_out3_allcons2onfr_coef2_recon_s1 #sig_fps10 #tanh128 #./Out/Exp1_Nov28
     save_output: ['phosphenes', 'stimulation_amplitude', 'stimulation_pulse_width','stimulation_frequency', 'reconstruction', 'input', 'total_charge']  #['phosphenes', 'stimulation', 'reconstruction']
     seed: 1 #0
     
@@ -37,7 +37,7 @@ optimization:
 
 training_pipeline:
     pipeline: unconstrained-video-reconstruction_out3
-    regularization_weight: 0 #0.5 # 0.5  # relative weight for enforcing interpretable (supervised) phosphene encodings
+    regularization_weight: 0.0 #0.5 # 0.5  # relative weight for enforcing interpretable (supervised) phosphene encodings
     
 
 dataset:

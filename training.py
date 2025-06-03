@@ -15,6 +15,8 @@ import time
 
 from torch.profiler import profile, record_function, ProfilerActivity
 
+os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -153,7 +155,6 @@ def train(dataset, models, training_pipeline, logging, cfg, start):
                 # Store examples in the summary trackers
                 example_output.update(model_output)
                 for key in cfg['save_output']:
-                    
                     shape = model_output[key].shape
 
                     if len(shape) == 4:  # Image batch (N,C,H,W)
@@ -163,6 +164,7 @@ def train(dataset, models, training_pipeline, logging, cfg, start):
                         #added/changed
                         if shape[1]==cfg['sequence_length']:  # Image batch (N,C,H,W)
                             img_batch = model_output[key][0].unsqueeze(dim=0).permute(1,0,2,3) 
+                            
                             tb_writer.add_images(key,
                                              normalize(img_batch),  # (scale to range [0, 1])
                                              timestamp['samples'], dataformats='NCHW')
@@ -172,17 +174,22 @@ def train(dataset, models, training_pipeline, logging, cfg, start):
                                                 timestamp['samples'], dataformats='NCHW')
                     elif len(shape) == 5: # Video batch (N, C, T, H, W)
                         img_batch = model_output[key][0].permute(1,0,2,3) # First video as img batch
+                        # print('img_batch',img_batch)
+                        print(key, 'min', img_batch.min(),'max', img_batch.max())
                         tb_writer.add_images(key,
                                              normalize(img_batch),  # (scale to range [0, 1])
-                                             timestamp['samples'], dataformats='NCHW')
+                                             timestamp['samples'], dataformats='NCHW') #RUNTIME WARNING MIN MAX both 1(white)
+                        # print('video') 
                     elif len(shape) == 2: # (N, P)
                         tb_writer.add_histogram(key, model_output[key]) # Stimulation
                     #added
                     elif len(shape) == 3: # (N, P) torch.Size([10, 2, 1000])
                         tb_writer.add_histogram(key+"_all", model_output[key][:,0,:], timestamp['samples']) # Stimulation
+                        print(key, 'min', model_output[key][:,0,:].min(),'max', model_output[key][:,0,:].max() )
                         for i in range(shape[0]):
                         #     tb_writer.add_histogram(key+str(i), model_output[key][i,0,:], timestamp['samples']) # Stimulation
                             tb_writer.add_histogram(key+'_step', model_output[key][i,0,:], timestamp['samples']+i) 
+                            # print('step', 'min', model_output[key][i,0,:].min(),'max', model_output[key][i,0,:].max())
 
             if batch_idx % (len(trainloader) // cfg['validations_per_epoch']) == 0:
                 # Run validation loop
